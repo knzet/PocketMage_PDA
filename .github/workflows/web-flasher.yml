@@ -192,10 +192,10 @@ jobs:
           ls -l docs/index.html
 
       - name: Deploy docs/ to GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v4
         with:
           path: docs
 
       - name: Publish to GitHub Pages
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
         # no inputs required; deploys artifact uploaded above
