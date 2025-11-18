@@ -206,6 +206,7 @@ jobs:
           set -euo pipefail
           mkdir -p "$GITHUB_WORKSPACE/docs"
           cp "$GITHUB_WORKSPACE/.github/index.html" "$GITHUB_WORKSPACE/docs/index.html"
+          cp "$GITHUB_WORKSPACE/.github/logo.png" "$GITHUB_WORKSPACE/docs/logo.png"
           echo "Copied web flasher interface"
 
       - name: Upload to GitHub Pages

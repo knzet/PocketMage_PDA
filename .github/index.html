@@ -99,6 +99,32 @@
             box-shadow: 4px 4px 0 currentColor;
         }
 
+        .form-controls-row {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .install-section {
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            flex: none;
+            min-width: 190px;
+        }
+
+        esp-web-install-button {
+            --esp-tools-button-color: var(--wp--preset--color--foreground);
+            --esp-tools-button-text-color: var(--wp--preset--color--background);
+        }
+
+        .status-text {
+            margin-top: 1rem;
+            color: #666;
+            font-size: clamp(14px, 0.875rem + ((1vw - 3.2px) * 0.375), 20px);
+        }
+
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -201,23 +227,6 @@
             margin-bottom: 0;
         }
 
-        .install-section {
-            text-align: center;
-            padding: 2rem;
-            margin: min(32px, 6.4vw) 0;
-        }
-
-        esp-web-install-button {
-            --esp-tools-button-color: var(--wp--preset--color--foreground);
-            --esp-tools-button-text-color: var(--wp--preset--color--background);
-        }
-
-        .status-text {
-            margin-top: 1rem;
-            color: #666;
-            font-size: clamp(14px, 0.875rem + ((1vw - 3.2px) * 0.375), 20px);
-        }
-
         .site-footer {
             background: var(--wp--preset--color--background);
             border-top: 1px solid #e0e0e0;
@@ -255,6 +264,10 @@
         }
 
         @media (max-width: 768px) {
+            .form-controls-row {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
             .radio-group {
                 flex-direction: column;
             }
@@ -262,6 +275,9 @@
             .header-container {
                 flex-direction: column;
                 gap: 1rem;
+            }
+            .install-section {
+                min-width: unset;
             }
         }
     </style>
@@ -271,11 +287,7 @@
     <header class="site-header">
         <div class="header-container">
             <div class="site-branding">
-                <!-- Placeholder icon -->
-                <svg class="site-logo" width="61" height="61" viewBox="0 0 61 61" fill="none">
-                    <rect width="61" height="61" fill="#453f87" />
-                    <path d="M20 20h21v21h-21z" fill="#fefef3" />
-                </svg>
+                <img class="site-logo" src="./logo.png" alt="PocketMage Logo">
                 <h1 class="site-title">
                     <a href="https://pocketmage.org">PocketMage</a>
                 </h1>
@@ -288,23 +300,30 @@
         <p>Flash firmware to your PocketMage via USB</p>
 
         <div class="form-section">
-            <div class="form-group">
-                <label for="version-select">Firmware Version</label>
-                <select id="version-select">
-                    <option value="">Loading versions...</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Installation Mode</label>
-                <div class="radio-group">
-                    <div class="radio-option">
-                        <input type="radio" id="update" name="install-type" value="update" checked />
-                        <label for="update">Update</label>
+            <div class="form-controls-row">
+                <div class="install-section">
+                    <esp-web-install-button id="install-btn"></esp-web-install-button>
+                    <div class="status-text" id="status">Select a version to begin</div>
+                </div>
+                <div style="flex:2;">
+                    <div class="form-group">
+                        <label for="version-select">Firmware Version</label>
+                        <select id="version-select">
+                            <option value="">Loading versions...</option>
+                        </select>
                     </div>
-                    <div class="radio-option">
-                        <input type="radio" id="fresh" name="install-type" value="fresh" />
-                        <label for="fresh">Fresh Install</label>
+                    <div class="form-group">
+                        <label>Installation Mode</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="update" name="install-type" value="update" checked />
+                                <label for="update">Update</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="fresh" name="install-type" value="fresh" />
+                                <label for="fresh">Fresh Install</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -316,11 +335,6 @@
                 saved content.</p>
             <p>Fresh install mode writes bootloader, partition table, and application. This will erase all stored data
                 and settings.</p>
-        </div>
-
-        <div class="install-section">
-            <esp-web-install-button id="install-btn"></esp-web-install-button>
-            <div class="status-text" id="status">Select a version to begin</div>
         </div>
 
         <div class="info-box">
