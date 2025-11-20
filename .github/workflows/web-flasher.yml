@@ -20,7 +20,15 @@ jobs:
         working-directory: Code/PocketMage_V3
 
     steps:
-      - name: Conjure the Repository
+      - name: Checkout release tag
+        if: github.event_name == 'release'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          fetch-depth: 0
+
+      - name: Checkout main
+        if: ${{ github.event_name != 'release' }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -49,7 +57,7 @@ jobs:
         run: |
           set -euo pipefail
           
-          # Read offsets from partition CSV
+          # Read offsets from partition CSV (expect 0x-prefixed hex or decimal)
           APP0_OFFSET=$(grep "^app0," partitions_4APP.csv | cut -d',' -f4 | tr -d ' ')
           PARTITIONS_OFFSET="0x8000"  # Standard for ESP32
           
@@ -68,7 +76,6 @@ jobs:
           set -euo pipefail
           
           # Extract flash mode and freq from platformio.ini or use sensible defaults for ESP32-S3
-          # ESP32-S3 typically uses QIO/DIO mode and 80MHz
           FLASH_MODE="dio"
           FLASH_FREQ="80m"
           FLASH_SIZE="16MB"
@@ -82,32 +89,51 @@ jobs:
       - name: Scribe the Firmware Manifest
         run: |
           set -euo pipefail
+
+          # Retrieve release tag (empty when not triggered by release event)
           RELEASE_TAG="${{ github.event.release.tag_name }}"
-          
+
           # Use timestamped dev version for non-release builds
           if [ -z "$RELEASE_TAG" ]; then
             RELEASE_TAG="dev-$(date +%Y%m%d-%H%M%S)"
           fi
-          
+
           BUILD_DIR="$GITHUB_WORKSPACE/Code/PocketMage_V3/.pio/build/PM_V3"
           TARGET_DIR="$GITHUB_WORKSPACE/docs/firmware/${RELEASE_TAG}"
           mkdir -p "${TARGET_DIR}"
-          
+
           # Copy all firmware files
           cp "${BUILD_DIR}/firmware.bin" "${TARGET_DIR}/firmware.bin"
           cp "${BUILD_DIR}/bootloader.bin" "${TARGET_DIR}/bootloader.bin"
           cp "${BUILD_DIR}/partitions.bin" "${TARGET_DIR}/partitions.bin"
-          
+
           echo "Firmware files copied to ${TARGET_DIR}"
-          
+
           # Get partition offsets from previous step
           PARTITIONS_OFFSET="${{ steps.offsets.outputs.partitions_offset }}"
           APP0_OFFSET_HEX="${{ steps.offsets.outputs.app0_offset }}"
 
-          # Make sure they are correct
-          PARTITIONS_OFFSET_DEC=$(printf "%d" "$PARTITIONS_OFFSET")
-          APP0_OFFSET_DEC=$(printf "%d" "$APP0_OFFSET_HEX")
-          
+          # Convert hex (0x...) or decimal to decimal using bash arithmetic expansion
+          to_decimal() {
+            local v="$1"
+            # strip whitespace
+            v=$(echo "$v" | tr -d '[:space:]')
+            if [[ "$v" =~ ^0x ]] || [[ "$v" =~ ^0X ]]; then
+              # arithmetic expansion handles 0x### format
+              echo $((v))
+            else
+              # if it's already decimal or empty, echo as-is (ensure numeric)
+              if [[ -z "$v" ]]; then
+                echo 0
+              else
+                echo $((v))
+              fi
+            fi
+          }
+
+          PARTITIONS_OFFSET_DEC=$(to_decimal "$PARTITIONS_OFFSET")
+          APP0_OFFSET_DEC=$(to_decimal "$APP0_OFFSET_HEX")
+
           echo "Offsets: Partitions=${PARTITIONS_OFFSET} (${PARTITIONS_OFFSET_DEC}), App=${APP0_OFFSET_HEX} (${APP0_OFFSET_DEC})"
 
           # Create a single manifest with all parts
@@ -138,20 +164,22 @@ jobs:
                 ]
               }]
             }' > "${TARGET_DIR}/manifest.json"
-          
+
           echo "Created manifest file for version: $RELEASE_TAG"
-          
+
           # Update or create version index
           INDEX_FILE="$GITHUB_WORKSPACE/docs/manifest-index.json"
           if [ -f "${INDEX_FILE}" ]; then
-            jq --arg v "$RELEASE_TAG" \
-              '(.versions // []) + [$v] | unique | sort_by(.) | reverse | {versions: .}' \
-              "${INDEX_FILE}" > "${INDEX_FILE}.tmp"
+            # Prepend new version and remove duplicates while preserving first occurrence (so newest is first)
+            jq --arg v "$RELEASE_TAG" '
+              def uniq_preserve: reduce .[] as $i ([]; if index($i)==null then . + [$i] else . end);
+              ([$v] + (.versions // [])) | uniq_preserve | {versions: .}
+            ' "${INDEX_FILE}" > "${INDEX_FILE}.tmp"
             mv "${INDEX_FILE}.tmp" "${INDEX_FILE}"
           else
             jq -n --arg v "$RELEASE_TAG" '{versions: [$v]}' > "${INDEX_FILE}"
           fi
-          
+
           echo "Updated manifest-index.json with version: $RELEASE_TAG"
 
       - name: Copy the Web Flasher Shrine (interface)
