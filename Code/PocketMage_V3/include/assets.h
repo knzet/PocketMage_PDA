@@ -1,20 +1,10 @@
+
 #ifndef ASSETS_H
 #define ASSETS_H
 
-#include <globals.h>
+#include <pgmspace.h>
 
-//
-extern const unsigned char KBStatusKBStatus0 [] PROGMEM;
-extern const unsigned char KBStatusKBStatus1 [] PROGMEM;
-extern const unsigned char KBStatusKBStatus2 [] PROGMEM;
-extern const unsigned char KBStatusKBStatus3 [] PROGMEM;
-extern const unsigned char KBStatusKBStatus4 [] PROGMEM;
-extern const unsigned char KBStatusKBStatus5 [] PROGMEM;
-extern const unsigned char KBStatusKBStatus6 [] PROGMEM;
-extern const unsigned char KBStatusKBStatus7 [] PROGMEM;
-extern const int KBStatusallArray_LEN;
-extern const unsigned char* KBStatusallArray[8];
-
+#if !OTA_APP // POCKETMAGE_OS
 //
 extern const unsigned char backgroundaero [] PROGMEM;
 extern const unsigned char backgroundbliss [] PROGMEM;
@@ -56,10 +46,6 @@ extern const int fileWizLiteallArray_LEN;
 extern const unsigned char* fileWizLiteallArray[4];
 
 //
-extern const unsigned char sleep0 [] PROGMEM;
-extern const unsigned char sleep1 [] PROGMEM;
-
-//
 extern const unsigned char nowLaternowAndLater0 [] PROGMEM;
 extern const unsigned char nowLaternowAndLater1 [] PROGMEM;
 extern const unsigned char nowLaternowAndLater2 [] PROGMEM;
@@ -76,39 +62,6 @@ extern const unsigned char taskIconTasks0 [] PROGMEM;
 
 //
 extern const unsigned char fontfont0 [] PROGMEM;
-
-//
-extern const unsigned char scrolloled0 [] PROGMEM;
-
-//
-extern const unsigned char _ScreenSaver0 [] PROGMEM;
-extern const unsigned char _ScreenSaver1 [] PROGMEM;
-extern const unsigned char _ScreenSaver2 [] PROGMEM;
-extern const unsigned char _ScreenSaver3 [] PROGMEM;
-extern const unsigned char _ScreenSaver4 [] PROGMEM;
-extern const unsigned char _ScreenSaver5 [] PROGMEM;
-extern const unsigned char _ScreenSaver6 [] PROGMEM;
-extern const unsigned char _ScreenSaver7 [] PROGMEM;
-extern const unsigned char _ScreenSaver8 [] PROGMEM;
-extern const unsigned char _ScreenSaver9 [] PROGMEM;
-extern const unsigned char _ScreenSaver10 [] PROGMEM;
-extern const unsigned char _ScreenSaver11 [] PROGMEM;
-extern const unsigned char _ScreenSaver12 [] PROGMEM;
-extern const unsigned char _ScreenSaver13 [] PROGMEM;
-extern const unsigned char _ScreenSaver14 [] PROGMEM;
-extern const unsigned char _ScreenSaver15 [] PROGMEM;
-extern const unsigned char _ScreenSaver16 [] PROGMEM;
-extern const unsigned char _ScreenSaver17 [] PROGMEM;
-extern const unsigned char* ScreenSaver_allArray[18];
-
-//
-extern const unsigned char _batt0 [] PROGMEM;
-extern const unsigned char _batt1 [] PROGMEM;
-extern const unsigned char _batt2 [] PROGMEM;
-extern const unsigned char _batt3 [] PROGMEM;
-extern const unsigned char _batt4 [] PROGMEM;
-extern const unsigned char _batt5 [] PROGMEM;
-extern const unsigned char* batt_allArray[6];
 
 //
 extern const unsigned char _settings [] PROGMEM;
@@ -163,4 +116,62 @@ extern const unsigned char _SFileIcon2 [] PROGMEM;
 extern const unsigned char _SFileIcon3 [] PROGMEM;
 extern const unsigned char* _SFileIcons[4];
 
+
+// Mage idle left frames
+extern const unsigned char _mage_idle_left0[] PROGMEM;
+extern const unsigned char _mage_idle_left1[] PROGMEM;
+extern const unsigned char _mage_idle_left2[] PROGMEM;
+extern const unsigned char _mage_idle_left3[] PROGMEM;
+extern const unsigned char _mage_idle_left4[] PROGMEM;
+extern const unsigned char _mage_idle_left5[] PROGMEM;
+extern const unsigned char _mage_idle_left6[] PROGMEM;
+extern const unsigned char* idle_left_allArray[7];
+
+// Mage idle right frames
+extern const unsigned char _mage_idle_right0[] PROGMEM;
+extern const unsigned char _mage_idle_right1[] PROGMEM;
+extern const unsigned char _mage_idle_right2[] PROGMEM;
+extern const unsigned char _mage_idle_right3[] PROGMEM;
+extern const unsigned char _mage_idle_right4[] PROGMEM;
+extern const unsigned char _mage_idle_right5[] PROGMEM;
+extern const unsigned char _mage_idle_right6[] PROGMEM;
+extern const unsigned char* idle_right_allArray[7];
+
+// Transition left frames
+extern const unsigned char _transition_left0[] PROGMEM;
+extern const unsigned char _transition_left1[] PROGMEM;
+extern const unsigned char _transition_left2[] PROGMEM;
+extern const unsigned char _transition_left3[] PROGMEM;
+extern const unsigned char _transition_left4[] PROGMEM;
+extern const unsigned char* trans_left_allArray[5];
+
+// Transition right frames
+extern const unsigned char _transition_right0[] PROGMEM;
+extern const unsigned char _transition_right1[] PROGMEM;
+extern const unsigned char _transition_right2[] PROGMEM;
+extern const unsigned char _transition_right3[] PROGMEM;
+extern const unsigned char _transition_right4[] PROGMEM;
+extern const unsigned char* trans_right_allArray[5];
+
+// Mage running left frames
+extern const unsigned char _mage_run_left0[] PROGMEM;
+extern const unsigned char _mage_run_left1[] PROGMEM;
+extern const unsigned char _mage_run_left2[] PROGMEM;
+extern const unsigned char _mage_run_left3[] PROGMEM;
+extern const unsigned char _mage_run_left4[] PROGMEM;
+extern const unsigned char _mage_run_left5[] PROGMEM;
+extern const unsigned char _mage_run_left6[] PROGMEM;
+extern const unsigned char* run_left_allArray[7];
+
+// Mage running right frames
+extern const unsigned char _mage_run_right0[] PROGMEM;
+extern const unsigned char _mage_run_right1[] PROGMEM;
+extern const unsigned char _mage_run_right2[] PROGMEM;
+extern const unsigned char _mage_run_right3[] PROGMEM;
+extern const unsigned char _mage_run_right4[] PROGMEM;
+extern const unsigned char _mage_run_right5[] PROGMEM;
+extern const unsigned char _mage_run_right6[] PROGMEM;
+extern const unsigned char* run_right_allArray[7];
+
+#endif // POCKETMAGE_OS
 #endif

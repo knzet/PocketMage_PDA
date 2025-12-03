@@ -1,6 +1,14 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+// OTA App
+// Is this an OTA APP? // OTA_APP: set -DOTA_APP_FLAG=1 in platformio.ini
+#if OTA_APP_FLAG
+#define OTA_APP true
+#else
+#define OTA_APP false
+#endif
+
 // CONFIGURATION & SETTINGS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////|
 #define KB_COOLDOWN 50                          // Keypress cooldown
@@ -20,6 +28,8 @@
 #define I2C_SCL       35
 #define I2C_SDA       36
 #define MPR121_ADDR   0x5A
+#define MP2722_ADDR   0x3F
+#define USB_MUX_PIN   7
 
 #define KB_IRQ        8
 //#define PWR_BTN       38  // V3.0
@@ -44,5 +54,18 @@
 #define SD_CMD        11
 #define SD_D0         13
 
+#define BZ_PIN        17
+
+// ===================== SYSTEM SETTINGS =====================
+// Persistent preferences
+extern int TIMEOUT;              // Auto sleep timeout (seconds)
+extern bool DEBUG_VERBOSE;       // Extra debug output
+extern bool SYSTEM_CLOCK;        // Show clock on screen
+extern bool SHOW_YEAR;           // Show year in clock
+extern bool SAVE_POWER;          // Enable power saving mode
+extern bool ALLOW_NO_MICROSD;    // Allow running without SD card
+extern bool HOME_ON_BOOT;        // Start home app on boot
+extern int OLED_BRIGHTNESS;      // OLED brightness (0-255)
+extern int OLED_MAX_FPS;         // OLED max FPS
 
 #endif
