@@ -738,7 +738,7 @@ char PocketmageKB::updateKeypress() {
       //return currentKB[k/10][k%10];
       if ((k/10) < 4) {
         //Key was pressed, reset timeout counter
-        if (prevTimeMillis_) *prevTimeMillis_ = millis();
+        CLOCK().setPrevTimeMillis(millis());
 
         //Return Key
         switch (kbState_) {
