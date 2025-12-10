@@ -153,7 +153,6 @@ void setup() {
 
 // Keyboard / OLED Loop
 void loop() {
-<<<<<<< HEAD
   static int i = 0;
   #if !OTA_APP // POCKETMAGE_OS
     if (!noTimeout)  checkTimeout();
@@ -163,15 +162,6 @@ void loop() {
   #endif
 
   updateBattState();
-=======
-  if (!noTimeout)  pocketmage::time::checkTimeout();
-  if (DEBUG_VERBOSE) {
-    pocketmage::debug::printDebug();
-    PowerSystem.printDiagnostics(); // power diag
-  }
-  
-  pocketmage::power::updateBattState();
->>>>>>> bcc97058d30b4af7084a6267a55f0c68d12ad995
   processKB();
 
   // Yield to watchdog
