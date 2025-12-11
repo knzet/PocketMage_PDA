@@ -726,7 +726,10 @@ void drawCalendarMonth(int monthOffset) {
   int startDay = firstDay.dayOfTheWeek();  // 0–6, Sun to Sat
 
   // Step 3: Number of days in the month
-  int daysInMonth = (DateTime(year, month + 1, 1) - DateTime(year, month, 1)).days();
+  int nextYear  = (month == 12) ? (year + 1) : year;
+  int nextMonth = (month == 12) ? 1 : (month + 1);
+
+  int daysInMonth = (DateTime(nextYear, nextMonth, 1) - DateTime(year, month, 1)).days();
 
   // Step 4: Blank out leading days
   for (int i = 0; i < startDay; ++i) {
@@ -745,7 +748,6 @@ void drawCalendarMonth(int monthOffset) {
     int y = GRID_Y + row * CELL_H;
     display.fillRect(x, y, CELL_W, CELL_H, GxEPD_WHITE);
   }
-
   // Step 6: Draw day numbers and events
   for (int i = 0; i < daysInMonth; ++i) {
     int dayIndex = i + startDay;     // total box index in the 7x6 grid
