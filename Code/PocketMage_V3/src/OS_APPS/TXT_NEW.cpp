@@ -12,40 +12,40 @@ static constexpr const char* TAG = "TXT_NEWz";
 
 // Font includes
 // Mono
-#include <Fonts/FreeMono9pt7b.h>
-#include <Fonts/FreeMonoBold12pt7b.h>
-#include <Fonts/FreeMonoBold18pt7b.h>
-#include <Fonts/FreeMonoBold24pt7b.h>
-#include <Fonts/FreeMonoBold9pt7b.h>
-#include <Fonts/FreeMonoBoldOblique12pt7b.h>
-#include <Fonts/FreeMonoBoldOblique18pt7b.h>
-#include <Fonts/FreeMonoBoldOblique24pt7b.h>
-#include <Fonts/FreeMonoBoldOblique9pt7b.h>
-#include <Fonts/FreeMonoOblique9pt7b.h>
+#include <Fonts/FreeMono9pt8b.h>
+#include <Fonts/FreeMonoBold12pt8b.h>
+#include <Fonts/FreeMonoBold18pt8b.h>
+#include <Fonts/FreeMonoBold24pt8b.h>
+#include <Fonts/FreeMonoBold9pt8b.h>
+#include <Fonts/FreeMonoBoldOblique12pt8b.h>
+#include <Fonts/FreeMonoBoldOblique18pt8b.h>
+#include <Fonts/FreeMonoBoldOblique24pt8b.h>
+#include <Fonts/FreeMonoBoldOblique9pt8b.h>
+#include <Fonts/FreeMonoOblique9pt8b.h>
 
 // Serif
-#include <Fonts/FreeSerif9pt7b.h>
-#include <Fonts/FreeSerifBold12pt7b.h>
-#include <Fonts/FreeSerifBold18pt7b.h>
-#include <Fonts/FreeSerifBold24pt7b.h>
-#include <Fonts/FreeSerifBold9pt7b.h>
-#include <Fonts/FreeSerifBoldItalic12pt7b.h>
-#include <Fonts/FreeSerifBoldItalic18pt7b.h>
-#include <Fonts/FreeSerifBoldItalic24pt7b.h>
-#include <Fonts/FreeSerifBoldItalic9pt7b.h>
-#include <Fonts/FreeSerifItalic9pt7b.h>
+#include <Fonts/FreeSerif9pt8b.h>
+#include <Fonts/FreeSerifBold12pt8b.h>
+#include <Fonts/FreeSerifBold18pt8b.h>
+#include <Fonts/FreeSerifBold24pt8b.h>
+#include <Fonts/FreeSerifBold9pt8b.h>
+#include <Fonts/FreeSerifBoldItalic12pt8b.h>
+#include <Fonts/FreeSerifBoldItalic18pt8b.h>
+#include <Fonts/FreeSerifBoldItalic24pt8b.h>
+#include <Fonts/FreeSerifBoldItalic9pt8b.h>
+#include <Fonts/FreeSerifItalic9pt8b.h>
 
 // Sans
-#include <Fonts/FreeSans9pt7b.h>
-#include <Fonts/FreeSansBold12pt7b.h>
-#include <Fonts/FreeSansBold18pt7b.h>
-#include <Fonts/FreeSansBold24pt7b.h>
-#include <Fonts/FreeSansBold9pt7b.h>
-#include <Fonts/FreeSansBoldOblique12pt7b.h>
-#include <Fonts/FreeSansBoldOblique18pt7b.h>
-#include <Fonts/FreeSansBoldOblique24pt7b.h>
-#include <Fonts/FreeSansBoldOblique9pt7b.h>
-#include <Fonts/FreeSansOblique9pt7b.h>
+#include <Fonts/FreeSans9pt8b.h>
+#include <Fonts/FreeSansBold12pt8b.h>
+#include <Fonts/FreeSansBold18pt8b.h>
+#include <Fonts/FreeSansBold24pt8b.h>
+#include <Fonts/FreeSansBold9pt8b.h>
+#include <Fonts/FreeSansBoldOblique12pt8b.h>
+#include <Fonts/FreeSansBoldOblique18pt8b.h>
+#include <Fonts/FreeSansBoldOblique24pt8b.h>
+#include <Fonts/FreeSansBoldOblique9pt8b.h>
+#include <Fonts/FreeSansOblique9pt8b.h>
 
 #include "esp32-hal-log.h"
 #include "esp_log.h"
@@ -1613,112 +1613,112 @@ void editAppend(char inchar) {
 // INIT
 void initFonts() {
   // Mono
-  fonts[mono].normal = &FreeMono9pt7b;
-  fonts[mono].normal_B = &FreeMonoBold9pt7b;
-  fonts[mono].normal_I = &FreeMonoOblique9pt7b;
-  fonts[mono].normal_BI = &FreeMonoBoldOblique9pt7b;
+  fonts[mono].normal = &FreeMono9pt8b;
+  fonts[mono].normal_B = &FreeMonoBold9pt8b;
+  fonts[mono].normal_I = &FreeMonoOblique9pt8b;
+  fonts[mono].normal_BI = &FreeMonoBoldOblique9pt8b;
 
-  fonts[mono].h1 = &FreeMonoBold24pt7b;
-  fonts[mono].h1_B = &FreeMonoBold24pt7b;  // Already bold
-  fonts[mono].h1_I = &FreeMonoBoldOblique24pt7b;
-  fonts[mono].h1_BI = &FreeMonoBoldOblique24pt7b;
+  fonts[mono].h1 = &FreeMonoBold24pt8b;
+  fonts[mono].h1_B = &FreeMonoBold24pt8b;  // Already bold
+  fonts[mono].h1_I = &FreeMonoBoldOblique24pt8b;
+  fonts[mono].h1_BI = &FreeMonoBoldOblique24pt8b;
 
-  fonts[mono].h2 = &FreeMonoBold18pt7b;
-  fonts[mono].h2_B = &FreeMonoBold18pt7b;
-  fonts[mono].h2_I = &FreeMonoBoldOblique18pt7b;
-  fonts[mono].h2_BI = &FreeMonoBoldOblique18pt7b;
+  fonts[mono].h2 = &FreeMonoBold18pt8b;
+  fonts[mono].h2_B = &FreeMonoBold18pt8b;
+  fonts[mono].h2_I = &FreeMonoBoldOblique18pt8b;
+  fonts[mono].h2_BI = &FreeMonoBoldOblique18pt8b;
 
-  fonts[mono].h3 = &FreeMonoBold12pt7b;
-  fonts[mono].h3_B = &FreeMonoBold12pt7b;
-  fonts[mono].h3_I = &FreeMonoBoldOblique12pt7b;
-  fonts[mono].h3_BI = &FreeMonoBoldOblique12pt7b;
+  fonts[mono].h3 = &FreeMonoBold12pt8b;
+  fonts[mono].h3_B = &FreeMonoBold12pt8b;
+  fonts[mono].h3_I = &FreeMonoBoldOblique12pt8b;
+  fonts[mono].h3_BI = &FreeMonoBoldOblique12pt8b;
 
-  fonts[mono].code = &FreeMono9pt7b;
-  fonts[mono].code_B = &FreeMono9pt7b;
-  fonts[mono].code_I = &FreeMono9pt7b;
-  fonts[mono].code_BI = &FreeMono9pt7b;
+  fonts[mono].code = &FreeMono9pt8b;
+  fonts[mono].code_B = &FreeMono9pt8b;
+  fonts[mono].code_I = &FreeMono9pt8b;
+  fonts[mono].code_BI = &FreeMono9pt8b;
 
-  fonts[mono].quote = &FreeMono9pt7b;
-  fonts[mono].quote_B = &FreeMonoBold9pt7b;
-  fonts[mono].quote_I = &FreeMonoOblique9pt7b;
-  fonts[mono].quote_BI = &FreeMonoBoldOblique9pt7b;
+  fonts[mono].quote = &FreeMono9pt8b;
+  fonts[mono].quote_B = &FreeMonoBold9pt8b;
+  fonts[mono].quote_I = &FreeMonoOblique9pt8b;
+  fonts[mono].quote_BI = &FreeMonoBoldOblique9pt8b;
 
-  fonts[mono].list = &FreeMono9pt7b;
-  fonts[mono].list_B = &FreeMonoBold9pt7b;
-  fonts[mono].list_I = &FreeMonoOblique9pt7b;
-  fonts[mono].list_BI = &FreeMonoBoldOblique9pt7b;
+  fonts[mono].list = &FreeMono9pt8b;
+  fonts[mono].list_B = &FreeMonoBold9pt8b;
+  fonts[mono].list_I = &FreeMonoOblique9pt8b;
+  fonts[mono].list_BI = &FreeMonoBoldOblique9pt8b;
 
   // Serif
-  fonts[serif].normal = &FreeSerif9pt7b;
-  fonts[serif].normal_B = &FreeSerifBold9pt7b;
-  fonts[serif].normal_I = &FreeSerifItalic9pt7b;
-  fonts[serif].normal_BI = &FreeSerifBoldItalic9pt7b;
+  fonts[serif].normal = &FreeSerif9pt8b;
+  fonts[serif].normal_B = &FreeSerifBold9pt8b;
+  fonts[serif].normal_I = &FreeSerifItalic9pt8b;
+  fonts[serif].normal_BI = &FreeSerifBoldItalic9pt8b;
 
-  fonts[serif].h1 = &FreeSerifBold24pt7b;
-  fonts[serif].h1_B = &FreeSerifBold24pt7b;
-  fonts[serif].h1_I = &FreeSerifBoldItalic24pt7b;
-  fonts[serif].h1_BI = &FreeSerifBoldItalic24pt7b;
+  fonts[serif].h1 = &FreeSerifBold24pt8b;
+  fonts[serif].h1_B = &FreeSerifBold24pt8b;
+  fonts[serif].h1_I = &FreeSerifBoldItalic24pt8b;
+  fonts[serif].h1_BI = &FreeSerifBoldItalic24pt8b;
 
-  fonts[serif].h2 = &FreeSerifBold18pt7b;
-  fonts[serif].h2_B = &FreeSerifBold18pt7b;
-  fonts[serif].h2_I = &FreeSerifBoldItalic18pt7b;
-  fonts[serif].h2_BI = &FreeSerifBoldItalic18pt7b;
+  fonts[serif].h2 = &FreeSerifBold18pt8b;
+  fonts[serif].h2_B = &FreeSerifBold18pt8b;
+  fonts[serif].h2_I = &FreeSerifBoldItalic18pt8b;
+  fonts[serif].h2_BI = &FreeSerifBoldItalic18pt8b;
 
-  fonts[serif].h3 = &FreeSerifBold12pt7b;
-  fonts[serif].h3_B = &FreeSerifBold12pt7b;
-  fonts[serif].h3_I = &FreeSerifBoldItalic12pt7b;
-  fonts[serif].h3_BI = &FreeSerifBoldItalic12pt7b;
+  fonts[serif].h3 = &FreeSerifBold12pt8b;
+  fonts[serif].h3_B = &FreeSerifBold12pt8b;
+  fonts[serif].h3_I = &FreeSerifBoldItalic12pt8b;
+  fonts[serif].h3_BI = &FreeSerifBoldItalic12pt8b;
 
-  fonts[serif].code = &FreeMono9pt7b;
-  fonts[serif].code_B = &FreeMono9pt7b;
-  fonts[serif].code_I = &FreeMono9pt7b;
-  fonts[serif].code_BI = &FreeMono9pt7b;
+  fonts[serif].code = &FreeMono9pt8b;
+  fonts[serif].code_B = &FreeMono9pt8b;
+  fonts[serif].code_I = &FreeMono9pt8b;
+  fonts[serif].code_BI = &FreeMono9pt8b;
 
-  fonts[serif].quote = &FreeSerif9pt7b;
-  fonts[serif].quote_B = &FreeSerifBold9pt7b;
-  fonts[serif].quote_I = &FreeSerifItalic9pt7b;
-  fonts[serif].quote_BI = &FreeSerifBoldItalic9pt7b;
+  fonts[serif].quote = &FreeSerif9pt8b;
+  fonts[serif].quote_B = &FreeSerifBold9pt8b;
+  fonts[serif].quote_I = &FreeSerifItalic9pt8b;
+  fonts[serif].quote_BI = &FreeSerifBoldItalic9pt8b;
 
-  fonts[serif].list = &FreeSerif9pt7b;
-  fonts[serif].list_B = &FreeSerifBold9pt7b;
-  fonts[serif].list_I = &FreeSerifItalic9pt7b;
-  fonts[serif].list_BI = &FreeSerifBoldItalic9pt7b;
+  fonts[serif].list = &FreeSerif9pt8b;
+  fonts[serif].list_B = &FreeSerifBold9pt8b;
+  fonts[serif].list_I = &FreeSerifItalic9pt8b;
+  fonts[serif].list_BI = &FreeSerifBoldItalic9pt8b;
 
   // Sans
-  fonts[sans].normal = &FreeSans9pt7b;
-  fonts[sans].normal_B = &FreeSansBold9pt7b;
-  fonts[sans].normal_I = &FreeSansOblique9pt7b;
-  fonts[sans].normal_BI = &FreeSansBoldOblique9pt7b;
+  fonts[sans].normal = &FreeSans9pt8b;
+  fonts[sans].normal_B = &FreeSansBold9pt8b;
+  fonts[sans].normal_I = &FreeSansOblique9pt8b;
+  fonts[sans].normal_BI = &FreeSansBoldOblique9pt8b;
 
-  fonts[sans].h1 = &FreeSansBold24pt7b;
-  fonts[sans].h1_B = &FreeSansBold24pt7b;
-  fonts[sans].h1_I = &FreeSansBoldOblique24pt7b;
-  fonts[sans].h1_BI = &FreeSansBoldOblique24pt7b;
+  fonts[sans].h1 = &FreeSansBold24pt8b;
+  fonts[sans].h1_B = &FreeSansBold24pt8b;
+  fonts[sans].h1_I = &FreeSansBoldOblique24pt8b;
+  fonts[sans].h1_BI = &FreeSansBoldOblique24pt8b;
 
-  fonts[sans].h2 = &FreeSansBold18pt7b;
-  fonts[sans].h2_B = &FreeSansBold18pt7b;
-  fonts[sans].h2_I = &FreeSansBoldOblique18pt7b;
-  fonts[sans].h2_BI = &FreeSansBoldOblique18pt7b;
+  fonts[sans].h2 = &FreeSansBold18pt8b;
+  fonts[sans].h2_B = &FreeSansBold18pt8b;
+  fonts[sans].h2_I = &FreeSansBoldOblique18pt8b;
+  fonts[sans].h2_BI = &FreeSansBoldOblique18pt8b;
 
-  fonts[sans].h3 = &FreeSansBold12pt7b;
-  fonts[sans].h3_B = &FreeSansBold12pt7b;
-  fonts[sans].h3_I = &FreeSansBoldOblique12pt7b;
-  fonts[sans].h3_BI = &FreeSansBoldOblique12pt7b;
+  fonts[sans].h3 = &FreeSansBold12pt8b;
+  fonts[sans].h3_B = &FreeSansBold12pt8b;
+  fonts[sans].h3_I = &FreeSansBoldOblique12pt8b;
+  fonts[sans].h3_BI = &FreeSansBoldOblique12pt8b;
 
-  fonts[sans].code = &FreeMono9pt7b;
-  fonts[sans].code_B = &FreeMono9pt7b;
-  fonts[sans].code_I = &FreeMono9pt7b;
-  fonts[sans].code_BI = &FreeMono9pt7b;
+  fonts[sans].code = &FreeMono9pt8b;
+  fonts[sans].code_B = &FreeMono9pt8b;
+  fonts[sans].code_I = &FreeMono9pt8b;
+  fonts[sans].code_BI = &FreeMono9pt8b;
 
-  fonts[sans].quote = &FreeSans9pt7b;
-  fonts[sans].quote_B = &FreeSansBold9pt7b;
-  fonts[sans].quote_I = &FreeSansOblique9pt7b;
-  fonts[sans].quote_BI = &FreeSansBoldOblique9pt7b;
+  fonts[sans].quote = &FreeSans9pt8b;
+  fonts[sans].quote_B = &FreeSansBold9pt8b;
+  fonts[sans].quote_I = &FreeSansOblique9pt8b;
+  fonts[sans].quote_BI = &FreeSansBoldOblique9pt8b;
 
-  fonts[sans].list = &FreeSans9pt7b;
-  fonts[sans].list_B = &FreeSansBold9pt7b;
-  fonts[sans].list_I = &FreeSansOblique9pt7b;
-  fonts[sans].list_BI = &FreeSansBoldOblique9pt7b;
+  fonts[sans].list = &FreeSans9pt8b;
+  fonts[sans].list_B = &FreeSansBold9pt8b;
+  fonts[sans].list_I = &FreeSansOblique9pt8b;
+  fonts[sans].list_BI = &FreeSansBoldOblique9pt8b;
 }
 
 void TXT_INIT() {
