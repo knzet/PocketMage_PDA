@@ -113,7 +113,7 @@ void checkTimeout() {
         prefs.end();
 
         CurrentAppState = HOME;
-        CurrentHOMEState = NOWLATER;
+        CurrentHOMEState = HOME_HOME;
         //OTA_APP: remove updateTaskArray and sortTasksByDueDate
         #if !OTA_APP
         updateTaskArray();
