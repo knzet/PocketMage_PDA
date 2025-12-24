@@ -11,6 +11,24 @@ This is a guide on common key combinations and commands on the PocketMage PDA de
 - **( o ) OR (ENTER)** | Select button
 
 ---
+## While Sleeping
+### Bypass home and directly enter an app
+You can bypass the home menu and enter directly into an app and wake up with one keystroke. Pressing the buttons below while PocketMage is sleeping will wake the device and boot into the corresponding app.
+
+- **( SPACE )** - Return to previous app (saved state from last sleep)
+- **( H )** - Home
+- **( U )** - USB
+- **( F )** - Filewiz
+- **( T )** - Tasks
+- **( N )** - TXT
+- **( S )** - Settings
+- **( C )** - Calendar
+- **( J )** - Journal
+- **( D )** - Dictionary (lexicon)
+- **( L )** - Loader
+
+
+---
 ## Home App
 ### Entering an OS app
 Type an app's name to enter that app. For example, to enter calendar, type "calendar". You can type the name as it appears on the screen or use a shortcut. For example, typing "cal" also enters the calendar.

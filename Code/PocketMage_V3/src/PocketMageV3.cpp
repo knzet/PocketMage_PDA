@@ -148,7 +148,6 @@ void processKB() {
 // SETUP
 void setup() {
   PocketMage_INIT();
-
 }
 
 // Keyboard / OLED Loop
