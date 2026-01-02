@@ -286,6 +286,44 @@ void loadState(bool changeState) {
     } else {
         CurrentAppState = static_cast<AppState>(prefs.getInt("CurrentAppState", HOME));
 
+        // Check boot keypress
+        KB().setKeyboardState(NORMAL);
+        char inchar = KB().updateKeypress();
+        switch (inchar) {
+        case 'h':
+            CurrentAppState = HOME;
+            break;
+        case 'u':
+            CurrentAppState = USB_APP;
+            break;
+        case 'f':
+            CurrentAppState = FILEWIZ;
+            break;
+        case 't':
+            CurrentAppState = TASKS;
+            break;
+        case 'n':
+            CurrentAppState = TXT;
+            break;
+        case 's':
+            CurrentAppState = SETTINGS;
+            break;
+        case 'c':
+            CurrentAppState = CALENDAR;
+            break;
+        case 'j':
+            CurrentAppState = JOURNAL;
+            break;
+        case 'd':
+            CurrentAppState = LEXICON;
+            break;
+        case 'l':
+            CurrentAppState = APPLOADER;
+            break;
+        default:
+            break;
+        }
+
         keypad.flush();
 
         // Initialize boot app if needed

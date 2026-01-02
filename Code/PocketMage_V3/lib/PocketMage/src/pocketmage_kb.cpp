@@ -697,7 +697,8 @@ void setupKB(int KB_irq_pin) {
   keypad.matrix(4, 10);
   wireKB();
   attachInterrupt(digitalPinToInterrupt(KB_irq_pin), KB_irq_handler, FALLING);
-  keypad.flush();
+  //keypad.flush();
+  KB().setTCA8418Event();
   keypad.enableInterrupts();
 }
 

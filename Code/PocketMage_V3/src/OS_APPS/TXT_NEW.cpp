@@ -51,7 +51,7 @@ static constexpr const char* TAG = "TXT_NEWz";
 #include "esp_log.h"
 
 // ------------------ General ------------------
-enum TXTState_NEW { TXT_, FONT, SAVE_AS, LOAD_FILE, JOURNAL_MODE };
+enum TXTState_NEW { TXT_, FONT, SAVE_AS, LOAD_FILE, JOURNAL_MODE, NEW_FILE };
 TXTState_NEW CurrentTXTState_NEW = TXT_;
 
 #define TYPE_INTERFACE_TIMEOUT 5000  // ms
@@ -1236,6 +1236,53 @@ void saveMarkdownFile(const String& path) {
   SDActive = false;
 }
 
+void newMarkdownFile(const String& path) {
+  if (SD().getNoSD()) {
+    OLED().oledWord("SAVE FAILED - No SD!");
+    delay(3000);
+    return;
+  }
+
+  SDActive = true;
+  setCpuFrequencyMhz(240);
+  delay(50);
+
+  // Determine save path
+  String savePath = path;
+  if (savePath == "" || savePath == "-")
+    savePath = "/temp.txt";
+  if (!savePath.startsWith("/"))
+    savePath = "/" + savePath;
+
+  File file = SD_MMC.open(savePath.c_str(), FILE_WRITE);
+  if (!file) {
+    OLED().oledWord("SAVE FAILED - OPEN ERR");
+    delay(2000);
+    ESP_LOGE("SD", "Failed to open file for writing: %s", savePath.c_str());
+    SDActive = false;
+    return;
+  }
+
+  // Write nothing
+
+  file.close();
+
+  // Save metadata
+  SD().writeMetadata(savePath);
+  SD().setEditingFile(savePath);
+
+  OLED().oledWord("Created: " + savePath);
+  delay(1000);
+
+  loadMarkdownFile(savePath);
+  updateScreen = true;
+
+  if (SAVE_POWER)
+    setCpuFrequencyMhz(POWER_SAVE_FREQ);
+  SDActive = false;
+}
+
+
 // Returns the pixel width of a LineObject (vector of wordObjects)
 int getLineWidth(const LineObject& lineObj, char style) {
   int lineWidth = 0;
@@ -1550,6 +1597,12 @@ void editAppend(char inchar) {
     CurrentTXTState_NEW = LOAD_FILE;
     KB().setKeyboardState(NORMAL);
   }
+  // NEW FILE Recieved
+  else if (inchar == 29 && CurrentTXTState_NEW != JOURNAL_MODE) {
+    CurrentTXTState_NEW = NEW_FILE;
+    KB().setKeyboardState(NORMAL);
+  }
+
   // Journal load
   else if (inchar == 7 && CurrentTXTState_NEW == JOURNAL_MODE) {
     String outPath = getCurrentJournal();
@@ -1866,6 +1919,70 @@ void processKB_TXT_NEW() {
         if (currentMillis - OLEDFPSMillis >= (1000/OLED_MAX_FPS)) {
           OLEDFPSMillis = currentMillis;
           OLED().oledLine(currentLine, false, "Input Filename");
+        }
+      }
+      break;
+    case NEW_FILE:
+      inchar = KB().updateKeypress();
+      if (currentMillis - KBBounceMillis >= KB_COOLDOWN) {
+        // HANDLE INPUTS
+        //No char recieved
+        if (inchar == 0);   
+        //CR Recieved
+        else if (inchar == 13) {                          
+          if (currentLine != "" && currentLine != "-") {
+            if (!currentLine.startsWith("/notes/")) currentLine = "/notes/" + currentLine;
+            if (!currentLine.endsWith(".txt")) currentLine = currentLine + ".txt";
+            newMarkdownFile(currentLine);
+            CurrentTXTState_NEW = TXT_;
+          } else {
+            OLED().oledWord("Invalid Name");
+            delay(2000);
+          }
+          
+          currentLine = "";
+        }                                      
+        //SHIFT Recieved
+        else if (inchar == 17) {                                  
+          if (KB().getKeyboardState() == SHIFT) KB().setKeyboardState(NORMAL);
+          else KB().setKeyboardState(SHIFT);
+        }
+        //FN Recieved
+        else if (inchar == 18) {                                  
+          if (KB().getKeyboardState() == FUNC) KB().setKeyboardState(NORMAL);
+          else KB().setKeyboardState(FUNC);
+        }
+        //Space Recieved
+        else if (inchar == 32) {                                  
+          // Spaces not allowed in filenames
+        }
+        //ESC / CLEAR Recieved
+        else if (inchar == 20) {                                  
+          currentLine = "";
+        }
+        //BKSP Recieved
+        else if (inchar == 8) {                  
+          if (currentLine.length() > 0) {
+            currentLine.remove(currentLine.length() - 1);
+          }
+        }
+        // Home recieved
+        else if (inchar == 12) {
+          CurrentTXTState_NEW = TXT_;
+        }
+        else {
+          currentLine += inchar;
+          if (inchar >= 48 && inchar <= 57) {}  //Only leave FN on if typing numbers
+          else if (KB().getKeyboardState() != NORMAL) {
+            KB().setKeyboardState(NORMAL);
+          }
+        }
+
+        currentMillis = millis();
+        //Make sure oled only updates at OLED_MAX_FPS
+        if (currentMillis - OLEDFPSMillis >= (1000/OLED_MAX_FPS)) {
+          OLEDFPSMillis = currentMillis;
+          OLED().oledLine(currentLine, false, "Input Name for New File");
         }
       }
       break;

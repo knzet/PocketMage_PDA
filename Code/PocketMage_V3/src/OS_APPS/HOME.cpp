@@ -446,9 +446,9 @@ void einkHandler_HOME() {
       if (newState) {
         newState = false;
         drawHome();
-        EINK().refresh();
+        //EINK().refresh();
         //einkFramesDynamic(frames,false);
-        //EINK().multiPassRefresh(2);
+        EINK().multiPassRefresh(1);
       }
       break;
 
