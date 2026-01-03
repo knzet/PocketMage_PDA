@@ -209,22 +209,24 @@ String renderWizMini(String folder, int8_t scrollDelta) {
   // Display KB state
   u8g2.setFont(u8g2_font_5x7_tf);
   switch (KB().getKeyboardState()) {
-  case 1:
-    u8g2.setDrawColor(0);
-    u8g2.drawBox(u8g2.getDisplayWidth() - u8g2.getStrWidth("SHIFT"), u8g2.getDisplayHeight(),
-      u8g2.getStrWidth("SHIFT"), -8);
-    u8g2.setDrawColor(1);
-    u8g2.drawStr((u8g2.getDisplayWidth() - u8g2.getStrWidth("SHIFT")), u8g2.getDisplayHeight(),
-      "SHIFT");
-    break;
-  case 2:
-    u8g2.setDrawColor(0);
-    u8g2.drawBox(u8g2.getDisplayWidth() - u8g2.getStrWidth("FN"), u8g2.getDisplayHeight(),
-      u8g2.getStrWidth("FN"), -8);
-    u8g2.setDrawColor(1);
-    u8g2.drawStr((u8g2.getDisplayWidth() - u8g2.getStrWidth("FN")), u8g2.getDisplayHeight(),
-      "FN");
-    break;
+    case 1:
+      u8g2.setDrawColor(0);
+      u8g2.drawBox(u8g2.getDisplayWidth() - u8g2.getStrWidth("SHIFT"), u8g2.getDisplayHeight(), u8g2.getStrWidth("SHIFT"), -8);
+      u8g2.setDrawColor(1);
+      u8g2.drawStr((u8g2.getDisplayWidth() - u8g2.getStrWidth("SHIFT")), u8g2.getDisplayHeight(), "SHIFT");
+      break;
+    case 2:
+      u8g2.setDrawColor(0);
+      u8g2.drawBox(u8g2.getDisplayWidth() - u8g2.getStrWidth("FN"), u8g2.getDisplayHeight(), u8g2.getStrWidth("FN"), -8);
+      u8g2.setDrawColor(1);
+      u8g2.drawStr((u8g2.getDisplayWidth() - u8g2.getStrWidth("FN")), u8g2.getDisplayHeight(), "FN");
+      break;
+    case 3:
+      u8g2.setDrawColor(0);
+      u8g2.drawBox(u8g2.getDisplayWidth() - u8g2.getStrWidth("FN+SHIFT"), u8g2.getDisplayHeight(), u8g2.getStrWidth("FN+SHIFT"), -8);
+      u8g2.setDrawColor(1);
+      u8g2.drawStr((u8g2.getDisplayWidth() - u8g2.getStrWidth("FN+SHIFT")), u8g2.getDisplayHeight(), "FN+SHIFT");
+      break;
   }
 
   u8g2.sendBuffer();
@@ -258,17 +260,23 @@ String fileWizardMini(bool allowRecentSelect, String rootDir) {
       ;
     // SHIFT Recieved
     else if (inchar == 17) {
-      if (KB().getKeyboardState() == SHIFT)
+      if (KB().getKeyboardState() == SHIFT || KB().getKeyboardState() == FN_SHIFT) {
         KB().setKeyboardState(NORMAL);
-      else
+      } else if (KB().getKeyboardState() == FUNC) {
+        KB().setKeyboardState(FN_SHIFT);
+      } else {
         KB().setKeyboardState(SHIFT);
+      }
     }
     // FN Recieved
     else if (inchar == 18) {
-      if (KB().getKeyboardState() == FUNC)
+      if (KB().getKeyboardState() == FUNC || KB().getKeyboardState() == FN_SHIFT) {
         KB().setKeyboardState(NORMAL);
-      else
+      } else if (KB().getKeyboardState() == SHIFT) {
+        KB().setKeyboardState(FN_SHIFT);
+      } else {
         KB().setKeyboardState(FUNC);
+      }
     }
     // Left received
     else if (inchar == 19) {
@@ -469,54 +477,58 @@ void processKB_FILEWIZ() {
   case WIZ2_R:
     disableTimeout = false;
 
-    // KB().setKeyboardState(NORMAL);
-    currentMillis = millis();
-    // Make sure oled only updates at 60fps
-    if (currentMillis - KBBounceMillis >= KB_COOLDOWN) {
-      char inchar = KB().updateKeypress();
-      // No char recieved
-      if (inchar == 0)
-        ;
-      // SHIFT Recieved
-      else if (inchar == 17) {
-        if (KB().getKeyboardState() == SHIFT)
-          KB().setKeyboardState(NORMAL);
-        else
-          KB().setKeyboardState(SHIFT);
-      }
-      // FN Recieved
-      else if (inchar == 18) {
-        if (KB().getKeyboardState() == FUNC)
-          KB().setKeyboardState(NORMAL);
-        else
-          KB().setKeyboardState(FUNC);
-      }
-      // Space Recieved
-      else if (inchar == 32) {
-      }
-      // ESC / CLEAR Recieved
-      else if (inchar == 20) {
-        currentWord = "";
-      }
-      // BKSP Recieved
-      else if (inchar == 8) {
-        if (currentWord.length() > 0) {
-          currentWord.remove(currentWord.length() - 1);
+      //KB().setKeyboardState(NORMAL);
+      currentMillis = millis();
+      //Make sure oled only updates at 60fps
+      if (currentMillis - KBBounceMillis >= KB_COOLDOWN) {  
+        char inchar = KB().updateKeypress();
+        //No char recieved
+        if (inchar == 0);                                         
+        // SHIFT Recieved
+        else if (inchar == 17) {
+          if (KB().getKeyboardState() == SHIFT || KB().getKeyboardState() == FN_SHIFT) {
+            KB().setKeyboardState(NORMAL);
+          } else if (KB().getKeyboardState() == FUNC) {
+            KB().setKeyboardState(FN_SHIFT);
+          } else {
+            KB().setKeyboardState(SHIFT);
+          }
         }
-      }
-      else if (inchar == 12) {
-        CurrentFileWizState = WIZ1_;
-        KB().setKeyboardState(NORMAL);
-        currentWord = "";
-        currentLine = "";
-        newState = true;
-        break;
-      }
-      // ENTER Recieved
-      else if (inchar == 13) {
-        // RENAME FILE
-        String newName = "/" + currentWord + ".txt";
-        SD().renFile(SD().getWorkingFile(), newName);
+        // FN Recieved
+        else if (inchar == 18) {
+          if (KB().getKeyboardState() == FUNC || KB().getKeyboardState() == FN_SHIFT) {
+            KB().setKeyboardState(NORMAL);
+          } else if (KB().getKeyboardState() == SHIFT) {
+            KB().setKeyboardState(FN_SHIFT);
+          } else {
+            KB().setKeyboardState(FUNC);
+          }
+        }
+        //Space Recieved
+        else if (inchar == 32) {}
+        //ESC / CLEAR Recieved
+        else if (inchar == 20) {                                  
+          currentWord = "";
+        }
+        //BKSP Recieved
+        else if (inchar == 8) {                  
+          if (currentWord.length() > 0) {
+            currentWord.remove(currentWord.length() - 1);
+          }
+        }
+        else if (inchar == 12) {
+          CurrentFileWizState = WIZ1_;
+          KB().setKeyboardState(NORMAL);
+          currentWord = "";
+          currentLine = "";
+          newState = true;
+          break;
+        }
+        //ENTER Recieved
+        else if (inchar == 13) {      
+          // RENAME FILE                    
+          String newName = "/" + currentWord + ".txt";
+          SD().renFile(SD().getWorkingFile(), newName);
 
         // RETURN TO WIZ0
         refreshFiles = true;
@@ -549,54 +561,58 @@ void processKB_FILEWIZ() {
   case WIZ2_C:
     disableTimeout = false;
 
-    // KB().setKeyboardState(NORMAL);
-    currentMillis = millis();
-    // Make sure oled only updates at 60fps
-    if (currentMillis - KBBounceMillis >= KB_COOLDOWN) {
-      char inchar = KB().updateKeypress();
-      // No char recieved
-      if (inchar == 0)
-        ;
-      // SHIFT Recieved
-      else if (inchar == 17) {
-        if (KB().getKeyboardState() == SHIFT)
-          KB().setKeyboardState(NORMAL);
-        else
-          KB().setKeyboardState(SHIFT);
-      }
-      // FN Recieved
-      else if (inchar == 18) {
-        if (KB().getKeyboardState() == FUNC)
-          KB().setKeyboardState(NORMAL);
-        else
-          KB().setKeyboardState(FUNC);
-      }
-      // Space Recieved
-      else if (inchar == 32) {
-      }
-      // ESC / CLEAR Recieved
-      else if (inchar == 20) {
-        currentWord = "";
-      }
-      // BKSP Recieved
-      else if (inchar == 8) {
-        if (currentWord.length() > 0) {
-          currentWord.remove(currentWord.length() - 1);
+      //KB().setKeyboardState(NORMAL);
+      currentMillis = millis();
+      //Make sure oled only updates at 60fps
+      if (currentMillis - KBBounceMillis >= KB_COOLDOWN) {  
+        char inchar = KB().updateKeypress();
+        //No char recieved
+        if (inchar == 0);                                         
+        // SHIFT Recieved
+        else if (inchar == 17) {
+          if (KB().getKeyboardState() == SHIFT || KB().getKeyboardState() == FN_SHIFT) {
+            KB().setKeyboardState(NORMAL);
+          } else if (KB().getKeyboardState() == FUNC) {
+            KB().setKeyboardState(FN_SHIFT);
+          } else {
+            KB().setKeyboardState(SHIFT);
+          }
         }
-      }
-      else if (inchar == 12) {
-        CurrentFileWizState = WIZ1_;
-        KB().setKeyboardState(NORMAL);
-        currentWord = "";
-        currentLine = "";
-        newState = true;
-        break;
-      }
-      // ENTER Recieved
-      else if (inchar == 13) {
-        // Copy FILE
-        String newName = "/" + currentWord + ".txt";
-        SD().copyFile(SD().getWorkingFile(), newName);
+        // FN Recieved
+        else if (inchar == 18) {
+          if (KB().getKeyboardState() == FUNC || KB().getKeyboardState() == FN_SHIFT) {
+            KB().setKeyboardState(NORMAL);
+          } else if (KB().getKeyboardState() == SHIFT) {
+            KB().setKeyboardState(FN_SHIFT);
+          } else {
+            KB().setKeyboardState(FUNC);
+          }
+        }
+        //Space Recieved
+        else if (inchar == 32) {}
+        //ESC / CLEAR Recieved
+        else if (inchar == 20) {                                  
+          currentWord = "";
+        }
+        //BKSP Recieved
+        else if (inchar == 8) {                  
+          if (currentWord.length() > 0) {
+            currentWord.remove(currentWord.length() - 1);
+          }
+        }
+        else if (inchar == 12) {
+          CurrentFileWizState = WIZ1_;
+          KB().setKeyboardState(NORMAL);
+          currentWord = "";
+          currentLine = "";
+          newState = true;
+          break;
+        }
+        //ENTER Recieved
+        else if (inchar == 13) {      
+          // Copy FILE                    
+          String newName = "/" + currentWord + ".txt";
+          SD().copyFile(SD().getWorkingFile(), newName);
 
         // RETURN TO WIZ0
         refreshFiles = true;

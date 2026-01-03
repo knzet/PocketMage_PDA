@@ -132,6 +132,10 @@ void PocketmageOled::oledLine(String line, bool doProgressBar, String bottomMsg)
         u8g2_.drawStr((u8g2_.getDisplayWidth() - u8g2_.getStrWidth("FN")),
                     u8g2_.getDisplayHeight(), "FN");
         break;
+      case 3: //FN_SHIFT
+        u8g2_.drawStr((u8g2_.getDisplayWidth() - u8g2_.getStrWidth("FN+SHIFT")),
+                    u8g2_.getDisplayHeight(), "FN+SHIFT");
+        break;
       default:
         break;
     }
@@ -162,6 +166,9 @@ void PocketmageOled::infoBar() {
     break;
     case 2:
     u8g2_.drawStr((u8g2_.getDisplayWidth() - u8g2_.getStrWidth("FN")) / 2,    u8g2_.getDisplayHeight(), "FN");
+    break;
+    case 3:
+    u8g2_.drawStr((u8g2_.getDisplayWidth() - u8g2_.getStrWidth("FN+SHIFT")) / 2,    u8g2_.getDisplayHeight(), "FN+SHIFT");
     break;
     default:
     break;

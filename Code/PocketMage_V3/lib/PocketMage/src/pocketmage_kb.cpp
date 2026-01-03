@@ -674,6 +674,12 @@ char keysArrayFN[4][10] = {
     {  14, '%', '_', '+', '-', '*', '/',  '?',  ',',  13 },
     {   0,  17,  18, ' ', ' ', ' ',  12,    7,    6,   0 }
 };
+char keysArrayFN_SHFT[4][10] = {
+    { '!', '@', '#', '$', '%', '^', '&',  '*',  '(', ')' },
+    { '~', '`', '|', '[', ']', '{', '}',  '<',  '>',   8 },
+    {  14, '%', '_', '&', '+', '-', '\\', '?',  ',',  13 },
+    {   0,  17,  18, ' ', ' ', ' ',  12,    7,    6,   0 }
+};
 #pragma endregion
 
 
@@ -697,7 +703,8 @@ void setupKB(int KB_irq_pin) {
   keypad.matrix(4, 10);
   wireKB();
   attachInterrupt(digitalPinToInterrupt(KB_irq_pin), KB_irq_handler, FALLING);
-  keypad.flush();
+  //keypad.flush();
+  KB().setTCA8418Event();
   keypad.enableInterrupts();
 }
 
@@ -744,6 +751,8 @@ char PocketmageKB::updateKeypress() {
             return keysArraySHFT[k/10][k%10];
           case 2:
             return keysArrayFN[k/10][k%10];
+          case 3:
+            return keysArrayFN_SHFT[k/10][k%10];
           default:
             return 0;
         }

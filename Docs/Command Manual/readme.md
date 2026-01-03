@@ -11,6 +11,24 @@ This is a guide on common key combinations and commands on the PocketMage PDA de
 - **( o ) OR (ENTER)** | Select button
 
 ---
+## While Sleeping
+### Bypass home and directly enter an app
+You can bypass the home menu and enter directly into an app and wake up with one keystroke. Pressing the buttons below while PocketMage is sleeping will wake the device and boot into the corresponding app.
+
+- **( SPACE )** - Return to previous app (saved state from last sleep)
+- **( H )** - Home
+- **( U )** - USB
+- **( F )** - Filewiz
+- **( T )** - Tasks
+- **( N )** - TXT
+- **( S )** - Settings
+- **( C )** - Calendar
+- **( J )** - Journal
+- **( D )** - Dictionary (lexicon)
+- **( L )** - Loader
+
+
+---
 ## Home App
 ### Entering an OS app
 Type an app's name to enter that app. For example, to enter calendar, type "calendar". You can type the name as it appears on the screen or use a shortcut. For example, typing "cal" also enters the calendar.
@@ -26,6 +44,7 @@ Many other commands can be done from the homescreen, including all of the settin
 - **(FN) + ( < )** | Exit app
 - **(FN) + ( > )** | Save document
 - **(FN) + ( o )** | Enter filesystem (loading files)
+- **(SHFT) + ( o )** | New blank text document
 - **(FN) + (Key)** | FN layer keymapping (legends on the PCB)
 - **(SHFT) + (key)** | Capital letter
 - **(ENTER)** | Create a new line
@@ -83,6 +102,13 @@ Type commands to navigate dates or create events. All commands are case-insensit
 - **1, 2, 3, ...** | Open event by index
 - **(FN) + ( < )** | Exit app
 
+### Repeating Events
+- **no** | No repeat
+- **daily** | Repeat every day
+- **weekly xx** | Repeat every week, **xx** is one or more of **mo**, **tu**, **we**, **th**, **fr**, **sa**, **su**
+- **monthly xx** | Repeat monthly, **xx** is the day of the month (1-31) or ordinal weekday (ex. **2tu** = the second Tuesday of each month)
+- **yearly xx** | Repeat every year, **xx** is month and day of the month (ex. **apr22**)
+
 ---
 ## Journal
 Type a date to open or create a journal entry. Commands are case-insensitive.
@@ -109,3 +135,12 @@ Manage and install .tar apps to OTA slots. Commands are case-insensitive.
 - **( D )** | Delete app in selected slot
 - **(FN) + ( < )** | Exit app / return to menu
 - **Progress Bar** | Shows extraction (0–50%) and installation (50–100%) status
+---
+## Sleep Modes
+When on battery, save power and look at a random screensaver. When charging, view a clock, upcoming tasks, and weather (work in progress)
+### Sleep (when not plugged into usb)
+- **sleep button** to enter sleep
+- **any key on keyboard** to wake
+### Now-Later (when usb is plugged in)
+- **sleep button** to enter now-later
+- **sleep button** to wake

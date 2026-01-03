@@ -27,7 +27,7 @@ extern String OTA3_APP;
 extern String OTA4_APP;
 
 // ===================== KEYBOARD STATE =====================
-enum KBState { NORMAL, SHIFT, FUNC };           // Keyboard state
+enum KBState { NORMAL, SHIFT, FUNC, FN_SHIFT };    // Keyboard state
 
 // ===================== APP STATES =====================
 enum AppState { HOME, TXT, FILEWIZ, USB_APP, BT, SETTINGS, TASKS, CALENDAR, JOURNAL, LEXICON, APPLOADER };
