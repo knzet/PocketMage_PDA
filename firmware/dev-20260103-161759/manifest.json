@@ -1,6 +1,6 @@
 {
   "name": "PocketMage OS",
-  "version": "dev-20251231-173859",
+  "version": "dev-20260103-161759",
   "home_assistant_domain": "",
   "new_install_prompt_erase": true,
   "builds": [
