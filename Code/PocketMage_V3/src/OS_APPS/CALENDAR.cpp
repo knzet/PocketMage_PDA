@@ -990,7 +990,7 @@ void parseICSEvent(const std::vector<String>& icsLines) {
                     int durMins = calculateDurationMinutes(startDate + "T" + startTime + "00", dtEnd);
                     duration = String(durMins) + "m";
                 } else if (eline.startsWith("RRULE:")) {
-                  parseICSRRule(line, repeat);
+                  parseICSRRule(eline, repeat);
                 } else if (eline.startsWith("DESCRIPTION:")) {
                   note = eline.substring(12);
                 }
@@ -1237,10 +1237,10 @@ void updateEventsFile() {
         f.println("DTSTART:" + dtStart);
         f.println("DTEND:" + dtEnd);
         if (repeat != "NO") {
-            // Ensure RRULE is valid
-            String rrule = repeat;
-            if (!rrule.startsWith("FREQ=")) rrule = "FREQ=" + rrule;
-            f.println("RRULE:" + repeatCodeToICS(rrule));
+          String rrule = repeatCodeToICS(repeat);
+          if (rrule.length() > 0) {
+            f.println("RRULE:" + rrule);
+          }
         }
         f.println("DESCRIPTION:" + note);
         f.println("END:VEVENT");
