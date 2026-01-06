@@ -923,7 +923,7 @@ bool parseICSRRule(const String& rruleLine, String& outRepeat) {
       if (semi >= 0)
         days = days.substring(0, semi);
 
-      days.replace(",", "");
+      // days.replace(",", ""); 
       outRepeat = "WEEKLY " + days;
       return true;
     }
