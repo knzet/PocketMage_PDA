@@ -542,6 +542,9 @@ int calculateDurationMinutes(const String& dtStart, const String& dtEnd) {
     if (diff < 0) diff = 0;
     return (int)diff;
 }
+bool isOnOrAfter(const String &date, const String &startDate) {
+    return date >= startDate;  // works because YYYYMMDD
+}
 
 int checkEvents(const String &YYYYMMDD, bool silent) {
     dayEvents.clear();
@@ -554,42 +557,54 @@ int checkEvents(const String &YYYYMMDD, bool silent) {
         calendarEventsLoaded = true;
     }
 
-    for (const auto &e : calendarEvents) {
-        String eventDate = e[1];  // startDate
-        String startTime = e[2];
-        String duration  = e[3];
-        String repeat    = e[4];
-        String note      = e[5];
+    for (const auto& e : calendarEvents) {
+      String eventDate = e[1];  // DTSTART (YYYYMMDD)
+      String repeat = e[4];
 
-        bool includeEvent = false;
+      bool includeEvent = false;
 
-        if (eventDate == YYYYMMDD) {
+      if (YYYYMMDD < eventDate) {
+        continue;
+      }
+
+      if (eventDate == YYYYMMDD) {
+        includeEvent = true;
+      } else if (repeat.startsWith("DAILY")) {
+        includeEvent = true;
+      } else if (repeat.startsWith("WEEKLY")) {
+        // repeat format: "WEEKLY FR" or "WEEKLY MO,WE"
+        String days = repeat.substring(7);  // after "WEEKLY"
+        days.trim();
+
+        int pos = 0;
+        while (pos < days.length()) {
+          int comma = days.indexOf(',', pos);
+          if (comma == -1)
+            comma = days.length();
+
+          String token = days.substring(pos, comma);
+          token.trim();
+
+          int y = YYYYMMDD.substring(0, 4).toInt();
+          int m = YYYYMMDD.substring(4, 6).toInt();
+          int d = YYYYMMDD.substring(6, 8).toInt();
+          int dow = getDayOfWeek(y, m, d);  // 0=Sun ... 6=Sat
+          const char* dows[] = {"SU", "MO", "TU", "WE", "TH", "FR", "SA"};
+          String dowStr = dows[dow];
+          if (token == dowStr) {
             includeEvent = true;
-        } else if (repeat.startsWith("WEEKLY")) {
-            int y = YYYYMMDD.substring(0, 4).toInt();
-            int m = YYYYMMDD.substring(4, 6).toInt();
-            int d = YYYYMMDD.substring(6, 8).toInt();
-            int dow = getDayOfWeek(y, m, d); // 0=Sun ... 6=Sat
-            String dowStr = "";
-            switch(dow) {
-                case 0: dowStr = "SU"; break;
-                case 1: dowStr = "MO"; break;
-                case 2: dowStr = "TU"; break;
-                case 3: dowStr = "WE"; break;
-                case 4: dowStr = "TH"; break;
-                case 5: dowStr = "FR"; break;
-                case 6: dowStr = "SA"; break;
-            }
-            if (repeat.endsWith(dowStr)) includeEvent = true;
-        } else if (repeat.startsWith("DAILY")) {
-            includeEvent = true;
-        }
+            break;
+          }
 
-        if (includeEvent) {
-            dayEvents.push_back(e);
-            count++;
-            if (count >= 7) break; // max 7 events per day
+          pos = comma + 1;
         }
+      }
+
+      if (includeEvent) {
+        dayEvents.push_back(e);
+        if (++count >= 7)
+          break;
+      }
     }
 
     if (!silent) ESP_LOGI(TAG, "checkEvents(): %d events on %s", count, YYYYMMDD.c_str());
