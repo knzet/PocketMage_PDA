@@ -5,6 +5,7 @@ static constexpr const char* TAG = "CALENDAR"; // Tag for all calls to ESP_LOG
 
 // function prototypes
 int daysInMonth(int year, int month);
+void updateEventArray();
 
 enum CalendarState { WEEK, MONTH, NEW_EVENT, VIEW_EVENT, SUN, MON, TUE, WED, THU, FRI, SAT };
 CalendarState CurrentCalendarState = MONTH;
@@ -52,6 +53,58 @@ int dayStringToInt(const String &day) {
     if (day == "FR") return 5;
     if (day == "SA") return 6;
     return -1; // invalid
+}
+String repeatCodeToICS(const String &repeat) {
+    String r = repeat;
+    r.toUpperCase();
+    if (r == "NO") return "";           // no recurrence
+    if (r == "DAILY") return "FREQ=DAILY";
+    if (r.startsWith("WEEKLY")) {
+        // Expect "WEEKLY SU", "WEEKLY MO,WE" etc
+        String days = r.substring(7);
+        days.trim();
+        return "FREQ=WEEKLY;BYDAY=" + days;
+    }
+    if (r.startsWith("MONTHLY")) {
+        // Could be "MONTHLY 10" (day) or "MONTHLY 2TU" (nth weekday)
+        return "FREQ=MONTHLY;BYMONTHDAY=" + r.substring(8);  // basic, extend later
+    }
+    if (r.startsWith("YEARLY")) {
+        return "FREQ=YEARLY";  // extend later with BYMONTH/BYMONTHDAY
+    }
+    return "";  // fallback
+}
+String ICSRRULEtoApp(const String &rrule) {
+    if (rrule.length() == 0) return "NO";
+
+    String r = rrule;
+    r.toUpperCase();
+
+    if (r.startsWith("FREQ=DAILY")) return "DAILY";
+
+    if (r.startsWith("FREQ=WEEKLY")) {
+        int byDayIdx = r.indexOf("BYDAY=");
+        if (byDayIdx >= 0) {
+            String days = r.substring(byDayIdx + 6);
+            days.trim();
+            return "WEEKLY " + days;
+        }
+        return "WEEKLY";
+    }
+
+    if (r.startsWith("FREQ=MONTHLY")) {
+        int byMonthDayIdx = r.indexOf("BYMONTHDAY=");
+        if (byMonthDayIdx >= 0) {
+            String day = r.substring(byMonthDayIdx + 11);
+            day.trim();
+            return "MONTHLY " + day;
+        }
+        return "MONTHLY";
+    }
+
+    if (r.startsWith("FREQ=YEARLY")) return "YEARLY";
+
+    return "NO"; // fallback
 }
 
 // Parse YYYYMMDD string to DateTime
@@ -494,6 +547,13 @@ int checkEvents(const String &YYYYMMDD, bool silent) {
     dayEvents.clear();
     int count = 0;
 
+    // Only load ICS files once per app run
+    static bool calendarEventsLoaded = false;
+    if (!calendarEventsLoaded) {
+        updateEventArray();  // populate calendarEvents
+        calendarEventsLoaded = true;
+    }
+
     for (const auto &e : calendarEvents) {
         String eventDate = e[1];  // startDate
         String startTime = e[2];
@@ -506,13 +566,11 @@ int checkEvents(const String &YYYYMMDD, bool silent) {
         if (eventDate == YYYYMMDD) {
             includeEvent = true;
         } else if (repeat.startsWith("WEEKLY")) {
-            // e.g., "WEEKLY FR"
             int y = YYYYMMDD.substring(0, 4).toInt();
             int m = YYYYMMDD.substring(4, 6).toInt();
             int d = YYYYMMDD.substring(6, 8).toInt();
             int dow = getDayOfWeek(y, m, d); // 0=Sun ... 6=Sat
             String dowStr = "";
-
             switch(dow) {
                 case 0: dowStr = "SU"; break;
                 case 1: dowStr = "MO"; break;
@@ -522,12 +580,10 @@ int checkEvents(const String &YYYYMMDD, bool silent) {
                 case 5: dowStr = "FR"; break;
                 case 6: dowStr = "SA"; break;
             }
-
             if (repeat.endsWith(dowStr)) includeEvent = true;
         } else if (repeat.startsWith("DAILY")) {
             includeEvent = true;
         }
-        // TODO: handle MONTHLY/ YEARLY if needed
 
         if (includeEvent) {
             dayEvents.push_back(e);
@@ -933,10 +989,10 @@ void parseICSEvent(const std::vector<String>& icsLines) {
                     String dtEnd = eline.substring(6);
                     int durMins = calculateDurationMinutes(startDate + "T" + startTime + "00", dtEnd);
                     duration = String(durMins) + "m";
-                } else if (eline.startsWith("RRULE:FREQ=")) {
-                    repeat = eline.substring(11); // "DAILY", "WEEKLY FR", etc.
+                } else if (eline.startsWith("RRULE:")) {
+                  parseICSRRule(line, repeat);
                 } else if (eline.startsWith("DESCRIPTION:")) {
-                    note = eline.substring(12);
+                  note = eline.substring(12);
                 }
             }
 
@@ -947,26 +1003,37 @@ void parseICSEvent(const std::vector<String>& icsLines) {
         }
     }
 }
-void parseICSFile(const std::vector<String>& lines) {
-    std::vector<String> currentEvent;
+void parseICSFile(const String &filename) {
+    SDActive = true;
+    File file = SD_MMC.open(filename, FILE_READ);
+    if (!file) {
+        ESP_LOGE(TAG, "Failed to open ICS file: %s", filename.c_str());
+        return;
+    }
+
+    std::vector<String> veventLines;
     bool inEvent = false;
 
-    for (const auto& line : lines) {
+    while (file.available()) {
+        String line = file.readStringUntil('\n');
+        line.trim();
+        if (line.length() == 0) continue;
+
         if (line == "BEGIN:VEVENT") {
             inEvent = true;
-            currentEvent.clear();
-            currentEvent.push_back(line);
+            veventLines.clear();
         } else if (line == "END:VEVENT") {
-            if (inEvent) {
-                currentEvent.push_back(line);
-                parseICSEvent(currentEvent);
-                inEvent = false;
-            }
+            inEvent = false;
+            parseICSEvent(veventLines); // <-- parse one VEVENT at a time
         } else if (inEvent) {
-            currentEvent.push_back(line);
+            veventLines.push_back(line);
         }
     }
+
+    file.close();
+    SDActive = false;
 }
+
 String calculateDTEnd(const String &startDate, const String &startTime, const String &duration) {
   // Parse start date
   int year  = startDate.substring(0, 4).toInt();
@@ -1020,43 +1087,65 @@ String calculateDTEnd(const String &startDate, const String &startTime, const St
 // 
 #pragma message "TODO: Migrate to a better/global file management system"
 void updateEventArray() {
-    SDActive = true;
-    pocketmage::setCpuSpeed(240);
-    delay(50);
+  ESP_LOGE(TAG, "updateEventsArray");
+  ESP_LOGI(TAG, "IUPDATE events array");
+  SDActive = true;
+  pocketmage::setCpuSpeed(240);
+  delay(50);
 
-    calendarEvents.clear(); // Clear existing events
+  calendarEvents.clear();
 
-    File eventsDir = SD_MMC.open("/sys/events");
-    if (!eventsDir) {
-        ESP_LOGE(TAG, "Failed to open /sys/events directory");
-        SDActive = false;
-        return;
-    }
-
-    File file = eventsDir.openNextFile();
-    while (file) {
-        String filename = file.name();
-        if (!file.isDirectory() && filename.endsWith(".ics")) {
-            ESP_LOGI(TAG, "Parsing ICS file: %s", filename.c_str());
-
-            std::vector<String> icsLines;
-            while (file.available()) {
-                String line = file.readStringUntil('\n');
-                line.trim();
-                if (line.length() > 0) {
-                    icsLines.push_back(line);
-                }
-            }
-            parseICSEvent(icsLines);
-        }
-        file = eventsDir.openNextFile();
-    }
-
-    if (SAVE_POWER) pocketmage::setCpuSpeed(POWER_SAVE_FREQ);
+  File eventsDir = SD_MMC.open("/sys/events");
+  if (!eventsDir) {
+    ESP_LOGE(TAG, "Failed to open /sys/events directory");
     SDActive = false;
+    return;
+  }
 
-    ESP_LOGI(TAG, "updateEventArray(): loaded %d events from ICS", (int)calendarEvents.size());
+  File file = eventsDir.openNextFile();
+  while (file) {
+    if (!file.isDirectory() && file.name()[0] != '\0') {
+      String filename = file.name();
+      if (!filename.startsWith("/")) {
+        filename = "/sys/events/" + filename;
+      }
+
+      if (filename.endsWith(".ics")) {
+        ESP_LOGI(TAG, "Parsing ICS file: %s", filename.c_str());
+
+        File f = SD_MMC.open(filename.c_str(), FILE_READ);
+        if (!f) {
+          ESP_LOGE(TAG, "Failed to open ICS file: %s", filename.c_str());
+        } else {
+          std::vector<String> icsLines;
+          while (f.available()) {
+            String line = f.readStringUntil('\n');
+            line.trim();
+            if (line.length() > 0) {
+              icsLines.push_back(line);
+            }
+          }
+          f.close();
+
+          parseICSEvent(icsLines);
+        }
+
+        delay(5);
+      }
+    }
+    file = eventsDir.openNextFile();
+  }
+
+  eventsDir.close();
+
+  if (SAVE_POWER)
+    pocketmage::setCpuSpeed(POWER_SAVE_FREQ);
+  SDActive = false;
+
+  ESP_LOGI(TAG, "updateEventArray(): loaded %d events from ICS", (int)calendarEvents.size());
 }
+
+
 String calculateEndTime(const String &startDate, const String &startTime, int durationMinutes) {
     // Parse start date
     int year  = startDate.substring(0, 4).toInt();
@@ -1151,7 +1240,7 @@ void updateEventsFile() {
             // Ensure RRULE is valid
             String rrule = repeat;
             if (!rrule.startsWith("FREQ=")) rrule = "FREQ=" + rrule;
-            f.println("RRULE:" + rrule);
+            f.println("RRULE:" + repeatCodeToICS(rrule));
         }
         f.println("DESCRIPTION:" + note);
         f.println("END:VEVENT");
