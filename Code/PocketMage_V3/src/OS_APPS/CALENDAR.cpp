@@ -1110,6 +1110,7 @@ void updateEventArray() {
 
   calendarEvents.clear();
 
+  SDActive = true;
   File eventsDir = SD_MMC.open("/sys/events");
   if (!eventsDir) {
     ESP_LOGE(TAG, "Failed to open /sys/events directory");
@@ -1152,6 +1153,8 @@ void updateEventArray() {
   }
 
   eventsDir.close();
+  SDActive = false;
+
 
   if (SAVE_POWER)
     pocketmage::setCpuSpeed(POWER_SAVE_FREQ);
@@ -1209,6 +1212,8 @@ void updateEventsFile() {
     delay(50);
 
     const char* filename = "/sys/events/calendar.ics";
+
+    SDActive = true;
     File f = SD_MMC.open(filename, FILE_WRITE);
     if (!f) {
         ESP_LOGE(TAG, "Failed to open %s for writing", filename);
@@ -1263,6 +1268,7 @@ void updateEventsFile() {
 
     f.println("END:VCALENDAR");
     f.close();
+
 
     if (SAVE_POWER) pocketmage::setCpuSpeed(POWER_SAVE_FREQ);
     SDActive = false;
